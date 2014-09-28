@@ -121,12 +121,22 @@ this.each(function(){
           width: 300px;
           height: 300px;
       }
+      #popup{
+      	position: relative;
+      	opacity: 0;
+      	margin: 0 auto;
+      	height: 500px;
+      	width: 700px;
+      	background-color: red;
+      	z-index: 999;
+      }
     </style>
     <script>
+    var popup = function(){
+    	$('#popup').animate({opacity: 1,}, 1000)    		
+    }
     $(document).ready(function(){
-    	//$('.equalizer').animateSevenPlugin({timer: 100, spanWidth:2, backgroundColor:'pink'});
-    	
- // $('#block1').animateSevenPlugin({timer: 1000});
+    		setTimeout(popup, 1000)
    })
       
     </script>
