@@ -21,9 +21,10 @@ circle {
 
 y_mouse = 30;
 x_mouse = 30;
+interval = 50
 
-var data = d3.range(300).map(function() {
-  return {xloc: 0, yloc: 0, xvel: 0, yvel: 0, ym: 0, timer:0};
+var data = d3.range(200).map(function() {
+  return {xloc: 0, yloc: 0, xvel: 0, yvel: 0, yselect: 0, timer:0};
 });
 
 var width = 960,
@@ -57,7 +58,7 @@ var circle = svg.selectAll("circle")
 d3.timer(function() {
 
   data.forEach(function(d) {
-    d.timer = Math.random()*10000
+    d.timer=Math.random()*1000
     d.xloc += d.xvel;
     d.yloc += d.yvel;
     d.xvel += 0.04 * (Math.random() - .5) - 0.05 * d.xvel - 0.0005 * d.xloc;
@@ -67,8 +68,6 @@ d3.timer(function() {
   circle
 
       .attr("transform", function(d) {return "translate(" + x(d.xloc) + "," + y(d.yloc) + ")";} )
-      //.attr("r", function(d) { return Math.min(1 + 3000 * Math.abs(d.xvel * d.yvel), 30); })
-    //  .transition()
       .attr('transform', function(d) {
     d3.select('svg').on('mousemove', function () {
    x_mouse = d3.mouse(this)[0]-20;
@@ -76,29 +75,30 @@ d3.timer(function() {
 });
     
     /(,)(\d{1,5})/.exec(this.attributes[4].value)
-    ym = RegExp.$2
+    yselect = RegExp.$2
     xm=/\d{1,5}/.exec(this.attributes[4].value)
     d.xloc += d.xvel;
     d.yloc += d.yvel;
-        if(xm>=x_mouse-50 && xm<=x_mouse&&ym<=y_mouse+50&&ym>=y_mouse){
-          d.xloc=d.xloc-0.2
-          d.yloc=d.yloc+0.2
 
+        if(xm >= x_mouse-interval && xm <= x_mouse
+        	&&yselect <= y_mouse+interval && yselect >= y_mouse){
+          	d.xloc=d.xloc-0.2
+          	d.yloc=d.yloc+0.2
           }
-       else if(xm>=x_mouse-50 && ym>=y_mouse-50&&xm<=x_mouse && ym<=y_mouse){
-          d.xloc=d.xloc-0.2
-          d.yloc=d.yloc-0.2
-          }
-         
-        else if(xm<=x_mouse+50 && ym>=y_mouse-50&&xm>=x_mouse&& ym<=y_mouse) 
-          {
-          d.xloc=d.xloc+0.2
-          d.yloc=d.yloc-0.2
-          }
-          
-        else if(xm<=x_mouse+50 && ym<=y_mouse+50&&xm>=x_mouse && ym>=y_mouse) 
-          { d.xloc=d.xloc+0.2
-          d.yloc=d.yloc+0.2
+       	else if(xm >= x_mouse-interval && yselect >= y_mouse-interval
+       			&&xm<=x_mouse && yselect<=y_mouse){
+          	d.xloc=d.xloc-0.2
+          	d.yloc=d.yloc-0.2
+          }         
+        else if(xm <= x_mouse+interval && yselect >= y_mouse-interval
+        		&&xm >= x_mouse && yselect <= y_mouse){
+          	d.xloc=d.xloc+0.2
+          	d.yloc=d.yloc-0.2
+          }          
+        else if(xm <= x_mouse+interval && yselect <= y_mouse+interval
+        		&&xm >= x_mouse && yselect >= y_mouse){
+        	d.xloc=d.xloc+0.2
+          	d.yloc=d.yloc+0.2
         }
         else {
           d.xvel += 0.04 * (Math.random() - .5) - 0.05 * d.xvel - 0.0005 * d.xloc;
@@ -106,35 +106,31 @@ d3.timer(function() {
         }
 
         return "translate(" + x(d.xloc) + "," + y(d.yloc) + ")";
-  //else {return "translate(" + x(d.xloc) + "," + y(d.yloc) + ")";}*/
 })
 .transition()
 .duration(function(d){return d.timer})
-.each("end", color);;
+.each("end", shiftColor);;
   time1 = Date.now();
   fps.text(Math.round(3000 / (time1 - time0)));
   time0 = time1;
 });
 
-color = function() {
+shiftColor = function() {
 
-  //Move to bottom
   d3.select(this)
     .transition()
-    .duration(Math.random()*1000)
+    .duration(function(d){return d.timer})
     .attr("fill",  'red')
     .each("end", function() {
  
-      //Move to top
       d3.select(this)
         .transition()
-        
         .delay(function(d, i) {
           return i * 50;
         })
-        .duration(Math.random()*1000)
+        .duration(function(d){return d.timer})
         .attr("fill", 'yellow')
-        .each("end", color);
+        .each("end", shiftColor);
 
     });
 
